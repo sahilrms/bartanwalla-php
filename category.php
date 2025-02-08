@@ -83,7 +83,7 @@ $pdo->close();
                                                 <h5><a href='product.php?product=" . $row['slug'] . "'>" . $row['name'] . "</a></h5>
                                             </div>
                                             <div class='box-footer'>
-                                                <b>&#36; " . number_format($row['price'], 2) . "</b>
+                                                <b>₹ " . number_format($row['price'], 2) . "</b>
                                             </div>
                                         </div>
                                     </div>

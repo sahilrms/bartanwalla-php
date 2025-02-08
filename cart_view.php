@@ -8,6 +8,7 @@
 
 		<div class="content-wrapper">
 			<div class="container">
+
 				<!-- Main content -->
 				<section class="content">
 					<div class="row">
@@ -68,19 +69,89 @@
 								</div>
 							</div>
 
+							<div class="box box-solid">
+								<div class="box-body">
+									<div class="address-section border p-3 rounded mt-3">
+										<h4 class="mb-3">Shipping Address</h4>
+										<form action="place_order.php" method="POST">
+											<div class="row">
+												<div class="col-md-6">
+													<label>Full Name</label>
+													<input type="text" name="full_name" class="form-control" required>
+												</div>
 
-							<!-- payment gateway  -->
-							<?php
-							if (isset($_SESSION['user'])) {
-								echo "
-	        					<div id='paypal-button'></div>
-	        				";
-							} else {
-								echo "
-	        					<h4>You need to <a href='login.php'>Login</a> to checkout.</h4>
-	        				";
-							}
-							?>
+												<div class="col-md-6">
+													<label>Phone Number</label>
+													<input type="tel" name="phone" class="form-control"
+														pattern="[0-9]{10}" required>
+												</div>
+
+												<div class="col-md-12">
+													<label>Address Line 1</label>
+													<input type="text" name="address1" class="form-control" required>
+												</div>
+
+												<div class="col-md-12">
+													<label>Address Line 2</label>
+													<input type="text" name="address2" class="form-control" required>
+												</div>
+
+												<div class="col-md-6">
+													<label>City</label>
+													<input type="text" name="city" class="form-control" required>
+												</div>
+
+												<div class="col-md-6">
+													<label>State</label>
+													<input type="text" name="state" class="form-control" required>
+												</div>
+
+												<div class="col-md-6">
+													<label>PIN Code</label>
+													<input type="text" name="pincode" class="form-control"
+														pattern="[0-9]{6}" required>
+												</div>
+
+												<input type="hidden" name="cart_items" id="cart_items">
+												<input type="hidden" name="items_total" id="items_total_hidden">
+												<input type="hidden" name="coupon_discount" id="coupon_discount_hidden">
+												<input type="hidden" name="shipping" id="shipping_hidden" value="50.00">
+												<input type="hidden" name="other_discount" id="other_discount_hidden">
+
+
+											</div>
+											<div class="row" style="margin-top: 10px;">
+												<div class="col-md-12 mt-3 d-flex justify-content-end">
+													<button type="submit" class="btn btn-success">Place Order</button>
+												</div>
+											</div>
+
+										</form>
+									</div>
+
+								</div>
+							</div>
+							<script>
+								document.addEventListener("DOMContentLoaded", function () {
+									// Get cart data from localStorage
+									var cartItems = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : [];
+									var couponDiscount = parseFloat(localStorage.getItem("CouponDiscount") || 0);
+									var otherDiscount = parseFloat(localStorage.getItem("OtherDiscount") || 0);
+									var itemsTotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+									var shipping = 50.00;
+									var grandTotal = itemsTotal - couponDiscount - otherDiscount + shipping;
+
+									// Set form hidden values
+									document.getElementById("cart_items").value = JSON.stringify(cartItems);
+									document.getElementById("items_total_hidden").value = itemsTotal.toFixed(2);
+									document.getElementById("coupon_discount_hidden").value = couponDiscount.toFixed(2);
+									document.getElementById("other_discount_hidden").value = otherDiscount.toFixed(2);
+									document.getElementById("shipping_hidden").value = shipping.toFixed(2);
+								});
+							</script>
+
+
+							//payment gateway here
 						</div>
 						<div class="col-sm-3">
 							<?php include 'includes/sidebar.php'; ?>
@@ -193,11 +264,11 @@
 				dataType: 'json',
 				success: function (response) {
 					if (response.success) {
-						$('#items_total').text('$' + response.items_total.toFixed(2));
-						$('#coupon_discount').text('-$' + response.coupon_discount.toFixed(2));
-						$('#shipping').text('$' + response.shipping.toFixed(2));
-						$('#other_discount').text('-$' + response.other_discount.toFixed(2));
-						$('#grand_total').text('$' + response.grand_total.toFixed(2));
+						$('#items_total').text('₹' + response.items_total.toFixed(2));
+						$('#coupon_discount').text('-₹' + response.coupon_discount.toFixed(2));
+						$('#shipping').text('₹' + response.shipping.toFixed(2));
+						$('#other_discount').text('-₹' + response.other_discount.toFixed(2));
+						$('#grand_total').text('₹' + response.grand_total.toFixed(2));
 					}
 				}
 			});
@@ -228,11 +299,11 @@
 					success: function (response) {
 						if (response.success) {
 							console.log(response)
-							$('#items_total').text('$' + response.items_total.toFixed(2));
-							$('#coupon_discount').text('-$' + response.coupon_discount);
-							$('#shipping').text('$' + response.shipping.toFixed(2));
-							$('#other_discount').text('-$' + response.other_discount.toFixed(2));
-							$('#grand_total').text('$' + response.grand_total.toFixed(2));
+							$('#items_total').text('₹' + response.items_total.toFixed(2));
+							$('#coupon_discount').text('-₹' + response.coupon_discount);
+							$('#shipping').text('₹' + response.shipping.toFixed(2));
+							$('#other_discount').text('-₹' + response.other_discount.toFixed(2));
+							$('#grand_total').text('₹' + response.grand_total.toFixed(2));
 						}
 					}
 				});

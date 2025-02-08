@@ -119,7 +119,7 @@ if (isset($_GET['category'])) {
                         echo "<span class='pull-right'><a href='#edit_photo' class='photo' data-toggle='modal' data-id='" . $row['id'] . "'><i class='fa fa-edit'></i></a></span>";
                         echo "</td>";
                         echo "<td><a href='#description' data-toggle='modal' class='btn btn-info btn-sm btn-flat desc' data-id='" . $row['id'] . "'><i class='fa fa-search'></i> View</a></td>";
-                        echo "<td>&#36; " . number_format($row['price'], 2) . "</td>";
+                        echo "<td>₹ " . number_format($row['price'], 2) . "</td>";
                         echo "<td>" . $counter . "</td>";
                         echo "<td>
                             <button class='btn btn-success btn-sm edit btn-flat' data-id='" . $row['id'] . "'><i class='fa fa-edit'></i> Edit</button>

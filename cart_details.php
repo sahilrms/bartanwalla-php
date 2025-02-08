@@ -40,7 +40,7 @@
 						<td><button type='button' data-id='".$row['cartid']."' class='btn btn-danger btn-flat cart_delete'><i class='fa fa-remove'></i></button></td>
 						<td>$imageHTML</td>
 						<td>".$row['name']."</td>
-						<td>&#36; ".number_format($row['price'], 2)."</td>
+						<td>₹ ".number_format($row['price'], 2)."</td>
 						<td class='input-group'>
 							<span class='input-group-btn'>
             					<button type='button' id='minus' class='btn btn-default btn-flat minus' data-id='".$row['cartid']."'><i class='fa fa-minus'></i></button>
@@ -51,14 +51,14 @@
 				                </button>
 				            </span>
 						</td>
-						<td>&#36; ".number_format($subtotal, 2)."</td>
+						<td>₹ ".number_format($subtotal, 2)."</td>
 					</tr>
 				";
 			}
 			$output .= "
 				<tr>
 					<td colspan='5' align='right'><b>Total</b></td>
-					<td><b>&#36; ".number_format($total, 2)."</b></td>
+					<td><b>₹ ".number_format($total, 2)."</b></td>
 				<tr>
 			";
 
@@ -88,7 +88,7 @@
 						<td><button type='button' data-id='".$row['productid']."' class='btn btn-danger btn-flat cart_delete'><i class='fa fa-remove'></i></button></td>
 						<td>$imageHTML</td>
 						<td>".$product['name']."</td>
-						<td>&#36; ".number_format($product['price'], 2)."</td>
+						<td>₹ ".number_format($product['price'], 2)."</td>
 						<td class='input-group'>
 							<span class='input-group-btn'>
             					<button type='button' id='minus' class='btn btn-default btn-flat minus' data-id='".$row['productid']."'><i class='fa fa-minus'></i></button>
@@ -99,7 +99,7 @@
 				                </button>
 				            </span>
 						</td>
-						<td>&#36; ".number_format($subtotal, 2)."</td>
+						<td>₹ ".number_format($subtotal, 2)."</td>
 					</tr>
 				";
 				
@@ -108,7 +108,7 @@
 			$output .= "
 				<tr>
 					<td colspan='5' align='right'><b>Total</b></td>
-					<td><b>&#36; ".number_format($total, 2)."</b></td>
+					<td><b>₹ ".number_format($total, 2)."</b></td>
 				<tr>
 			";
 		} else {

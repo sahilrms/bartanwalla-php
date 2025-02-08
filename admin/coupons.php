@@ -96,7 +96,7 @@ if (isset($_GET['category'])) {
                         echo "<tr>";
                         echo "<td>" . $row['code'] . "</td>";  // Coupon code
                         echo "<td>" . ucfirst($row['discount_type']) . "</td>";  // Discount type (percentage or fixed)
-                        echo "<td>&#36; " . number_format($row['discount_value'], 2) . "</td>";  // Discount value
+                        echo "<td>₹ " . number_format($row['discount_value'], 2) . "</td>";  // Discount value
                         echo "<td>" . ($row['expiration_date'] ? date('Y-m-d H:i', strtotime($row['expiration_date'])) : 'N/A') . "</td>";  // Expiration date
                         echo "<td>" . $row['usage_limit'] . "</td>";  // Usage limit
                         echo "<td>" . ($row['applicable_to_users'] ? $row['applicable_to_users'] : 'All users') . "</td>";  // Applicable users (can be a list of user IDs)
