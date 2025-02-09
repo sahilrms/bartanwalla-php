@@ -111,9 +111,9 @@
 													<input type="text" name="pincode" class="form-control"
 														pattern="[0-9]{6}" required>
 												</div>
-
 												<input type="hidden" name="cart_items" id="cart_items">
 												<input type="hidden" name="items_total" id="items_total_hidden">
+												<input type="hidden" name="grand_total" id="grandTotal_hidden">
 												<input type="hidden" name="coupon_discount" id="coupon_discount_hidden">
 												<input type="hidden" name="shipping" id="shipping_hidden" value="50.00">
 												<input type="hidden" name="other_discount" id="other_discount_hidden">
@@ -131,24 +131,7 @@
 
 								</div>
 							</div>
-							<script>
-								document.addEventListener("DOMContentLoaded", function () {
-									// Get cart data from localStorage
-									var cartItems = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : [];
-									var couponDiscount = parseFloat(localStorage.getItem("CouponDiscount") || 0);
-									var otherDiscount = parseFloat(localStorage.getItem("OtherDiscount") || 0);
-									var itemsTotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-									var shipping = 50.00;
-									var grandTotal = itemsTotal - couponDiscount - otherDiscount + shipping;
 
-									// Set form hidden values
-									document.getElementById("cart_items").value = JSON.stringify(cartItems);
-									document.getElementById("items_total_hidden").value = itemsTotal.toFixed(2);
-									document.getElementById("coupon_discount_hidden").value = couponDiscount.toFixed(2);
-									document.getElementById("other_discount_hidden").value = otherDiscount.toFixed(2);
-									document.getElementById("shipping_hidden").value = shipping.toFixed(2);
-								});
-							</script>
 
 
 							//payment gateway here
@@ -172,6 +155,7 @@
 			// Clear the localStorage
 			localStorage.clear();
 		});
+		// document.addEventListener("DOMContentLoaded", updateCartValue());
 		var total = 0;
 		$(function () {
 			$(document).on('click', '.cart_delete', function (e) {
@@ -187,8 +171,16 @@
 							getDetails();
 							getCart();
 							getTotal();
+							updateCartValue();
 						}
 					}
+				});
+			});
+
+			$(document).ready(function () {
+				$("form").submit(function (e) {
+					// Ensure hidden fields are updated before submission
+					updateCartValue();
 				});
 			});
 
@@ -210,6 +202,7 @@
 							getDetails();
 							getCart();
 							getTotal(); // Update total after quantity change
+							updateCartValue();
 						}
 					}
 				});
@@ -238,6 +231,7 @@
 
 			getDetails();
 			getTotal();
+			updateCartValue();
 
 		});
 
@@ -247,11 +241,20 @@
 				url: 'cart_details.php',
 				dataType: 'json',
 				success: function (response) {
-
+					console.log('isResponse', response)
 					$('#tbody').html(response);
 					getCart();
 				}
 			});
+		}
+
+		function getTableDataIds() {
+			let ids = [];
+			console.log()
+			document.querySelectorAll("#tbody tr[data-item-id]").forEach(td => {
+				ids.push(td.getAttribute("data-item-id"));
+			});
+			return ids;
 		}
 
 
@@ -269,23 +272,40 @@
 						$('#shipping').text('₹' + response.shipping.toFixed(2));
 						$('#other_discount').text('-₹' + response.other_discount.toFixed(2));
 						$('#grand_total').text('₹' + response.grand_total.toFixed(2));
+						updateCartValue();
 					}
 				}
 			});
 		}
 
+		function updateCartValue() {
+
+			// Get cart data from localStorage
+			var cartItems = getTableDataIds();
+			var couponDiscount = document.getElementById("coupon_discount").textContent.replace(/[₹,]/g, '');
+			var otherDiscount = document.getElementById("other_discount").textContent.replace(/[₹,]/g, '');
+			var itemsTotal = document.getElementById("items_total").textContent.replace(/[₹,]/g, '');
+			var shipping = document.getElementById("shipping").textContent.replace(/[₹,]/g, '');
+			var grandTotal = document.getElementById("grand_total").textContent.replace(/[₹,]/g, '');
 
 
-		// function getTotal() {
-		// 	$.ajax({
-		// 		type: 'POST',
-		// 		url: 'cart_total.php',
-		// 		dataType: 'json',
-		// 		success: function (response) {
-		// 			total = response;
-		// 		}
-		// 	});
-		// }
+			console.log('cartItems', cartItems)
+			console.log('couponDiscount', couponDiscount)
+			console.log('otherDiscount', otherDiscount)
+			console.log('itemsTotal', itemsTotal)
+			console.log('shipping', shipping)
+			console.log('grandTotal', grandTotal)
+
+
+			// Set form hidden values
+			document.getElementById("cart_items").value = JSON.stringify(cartItems);
+			document.getElementById("items_total_hidden").value = itemsTotal;
+			document.getElementById("grandTotal_hidden").value = grandTotal;
+			document.getElementById("coupon_discount_hidden").value = couponDiscount;
+			document.getElementById("other_discount_hidden").value = otherDiscount;
+			document.getElementById("shipping_hidden").value = shipping;
+
+		}
 
 		$(document).on('click', '#apply_coupon', function (e) {
 			e.preventDefault();
@@ -304,6 +324,7 @@
 							$('#shipping').text('₹' + response.shipping.toFixed(2));
 							$('#other_discount').text('-₹' + response.other_discount.toFixed(2));
 							$('#grand_total').text('₹' + response.grand_total.toFixed(2));
+							updateCartValue();
 						}
 					}
 				});
@@ -328,6 +349,7 @@
 								discountMessage = '<span class="text-success">Coupon applied successfully! Discount: ₹' + response.discount + '</span>';
 							}
 							$('#coupon_message').html(discountMessage);
+							updateCartValue();
 
 						} else {
 							$('#coupon_message').html('<span class="text-danger">Invalid coupon code!</span>');
@@ -345,47 +367,7 @@
 
 
 	</script>
-	<!-- Paypal Express -->
-	<script>
-		paypal.Button.render({
-			env: 'sandbox', // change for production if app is live,
 
-			client: {
-				sandbox: 'ASb1ZbVxG5ZFzCWLdYLi_d1-k5rmSjvBZhxP2etCxBKXaJHxPba13JJD_D3dTNriRbAv3Kp_72cgDvaZ',
-				//production: 'AaBHKJFEej4V6yaArjzSx9cuf-UYesQYKqynQVCdBlKuZKawDDzFyuQdidPOBSGEhWaNQnnvfzuFB9SM'
-			},
-
-			commit: true, // Show a 'Pay Now' button
-
-			style: {
-				color: 'gold',
-				size: 'small'
-			},
-
-			payment: function (data, actions) {
-				return actions.payment.create({
-					payment: {
-						transactions: [
-							{
-								//total purchase
-								amount: {
-									total: total,
-									currency: 'USD'
-								}
-							}
-						]
-					}
-				});
-			},
-
-			onAuthorize: function (data, actions) {
-				return actions.payment.execute().then(function (payment) {
-					window.location = 'sales.php?pay=' + payment.id;
-				});
-			},
-
-		}, '#paypal-button');
-	</script>
 </body>
 
 </html>
